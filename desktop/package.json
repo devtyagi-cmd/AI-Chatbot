@@ -1,0 +1,33 @@
+{
+  "name": "ai-data-chatbot-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "31.3.0",
+    "electron-builder": "24.13.3"
+  },
+  "dependencies": {
+    "serve-handler": "6.1.5"
+  },
+  "build": {
+    "appId": "com.localdev.aidatachatbot",
+    "productName": "AI Data Chatbot",
+    "win": {
+      "target": "nsis"
+    },
+    "files": [
+      "main.js",
+      "package.json"
+    ],
+    "extraResources": [
+      { "from": "../backend/dist/backend.exe", "to": "backend/backend.exe" },
+      { "from": "../backend/.env", "to": "backend/.env" },
+      { "from": "../frontend/out", "to": "frontend/out" }
+    ]
+  }
+}
