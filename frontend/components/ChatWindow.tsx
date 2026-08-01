@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Bot, Send, Sparkles, User } from "lucide-react";
-import { ChatResponse, sendChat } from "@/lib/api";
+import { ChatResponse, getHistory, sendChat } from "@/lib/api";
 import DataTable from "./DataTable";
 import ChartRenderer from "./ChartRenderer";
 import LoadingDots from "./LoadingDots";
@@ -25,7 +25,33 @@ const SUGGESTIONS = [
 export default function ChatWindow({ fileId }: { fileId: string }) {
   const [question, setQuestion] = useState("");
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setHistoryLoading(true);
+    getHistory(fileId).then((items) => {
+      if (cancelled) return;
+      setExchanges(
+        items.map((item) => ({
+          question: item.question,
+          response: {
+            answer: item.answer,
+            sql: item.sql,
+            table: item.table,
+            chart: item.chart,
+          },
+        }))
+      );
+      setHistoryLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+    // Only reload history when switching to a different file.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -62,7 +88,14 @@ export default function ChatWindow({ fileId }: { fileId: string }) {
     <div className="bg-white rounded-xl p-4 flex flex-col gap-4 border border-gray-100 shadow-sm">
       <h3 className="font-medium text-gray-800">Ask a question about your data</h3>
 
-      {exchanges.length === 0 && (
+      {historyLoading && (
+        <p className="text-xs text-gray-400 flex items-center gap-1.5">
+          <LoadingDots />
+          Loading previous conversation...
+        </p>
+      )}
+
+      {!historyLoading && exchanges.length === 0 && (
         <div className="flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button

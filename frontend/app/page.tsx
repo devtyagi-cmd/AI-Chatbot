@@ -5,6 +5,7 @@ import { BarChart3, LogOut } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import DataProfile from "@/components/DataProfile";
 import ChatWindow from "@/components/ChatWindow";
+import RecentFiles from "@/components/RecentFiles";
 import { UploadResponse } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
@@ -35,7 +36,12 @@ export default function Home() {
           </button>
         </header>
 
-        {!uploaded && <FileUpload onUploaded={setUploaded} />}
+        {!uploaded && (
+          <div className="space-y-6">
+            <FileUpload onUploaded={setUploaded} />
+            <RecentFiles onReopened={setUploaded} />
+          </div>
+        )}
 
         {uploaded && (
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 items-start">

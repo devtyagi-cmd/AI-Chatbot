@@ -9,7 +9,9 @@ from fastapi import APIRouter, HTTPException
 from openai import OpenAI
 from pydantic import BaseModel
 
-from ..data_store import store
+from ..data_store import get_or_load
+from ..db import get_db_session, is_db_enabled
+from ..models import ChatMessageRecord
 from ..services.json_safe import records_json_safe
 from ..services.sql_engine import SQLValidationError, run_sql_query
 from ..services.tool_schemas import TOOLS
@@ -42,6 +44,32 @@ def get_client() -> OpenAI:
     return _client
 
 
+def save_chat_message(file_id: str, question: str, result: Dict[str, Any]) -> None:
+    """Persists a completed Q&A turn so it's available in chat history
+    (GET /api/history/{file_id}) even after a backend restart, until it
+    ages out past the retention window. No-ops entirely if no database is
+    configured (e.g. local dev)."""
+    if not is_db_enabled():
+        return
+    try:
+        with get_db_session() as db:
+            db.add(
+                ChatMessageRecord(
+                    file_id=file_id,
+                    question=question,
+                    answer=result.get("answer", ""),
+                    sql=result.get("sql"),
+                    table_json=result.get("table"),
+                    chart_json=result.get("chart"),
+                )
+            )
+            db.commit()
+    except Exception as e:
+        # A history-logging failure shouldn't take down a successful answer
+        # the user is about to receive.
+        logger.warning("Failed to save chat history for file %s: %s", file_id, e)
+
+
 class ChatRequest(BaseModel):
     file_id: str
     question: str
@@ -68,7 +96,7 @@ Rules:
 
 @router.post("/chat")
 async def chat(req: ChatRequest) -> Dict[str, Any]:
-    session = store.get(req.file_id)
+    session = get_or_load(req.file_id)
     if session is None:
         raise HTTPException(status_code=404, detail="File not found. Please upload it again.")
 
@@ -106,12 +134,14 @@ async def chat(req: ChatRequest) -> Dict[str, Any]:
             )
             # Model replied directly without using final_answer - surface its
             # text as the answer rather than erroring out.
-            return {
+            result = {
                 "answer": msg.content or "I couldn't compute an answer from this file.",
                 "sql": last_sql,
                 "table": last_table,
                 "chart": None,
             }
+            save_chat_message(req.file_id, req.question, result)
+            return result
 
         messages.append(msg.model_dump(exclude_unset=True))
 
@@ -201,12 +231,14 @@ async def chat(req: ChatRequest) -> Dict[str, Any]:
                         "data": last_table["rows"],
                     }
 
-            return {
+            result = {
                 "answer": final_result.get("answer", ""),
                 "sql": last_sql,
                 "table": last_table,
                 "chart": chart,
             }
+            save_chat_message(req.file_id, req.question, result)
+            return result
 
         # No final_answer yet - loop again so the model can keep querying.
 

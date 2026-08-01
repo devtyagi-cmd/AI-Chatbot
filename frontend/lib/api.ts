@@ -48,6 +48,21 @@ export interface ChatResponse {
   chart: ChartResult | null;
 }
 
+export interface RecentFile {
+  file_id: string;
+  filename: string;
+  uploaded_at: string;
+  row_count: number | null;
+}
+
+export interface HistoryItem {
+  question: string;
+  answer: string;
+  sql: string | null;
+  table: TableResult | null;
+  chart: ChartResult | null;
+}
+
 function authHeaders(): Record<string, string> {
   const token = getStoredAuthToken();
   return token ? { Authorization: `Basic ${token}` } : {};
@@ -138,4 +153,47 @@ export async function sendChat(fileId: string, question: string): Promise<ChatRe
     throw new Error(await parseErrorDetail(res, "Chat request failed"));
   }
   return res.json();
+}
+
+/** Files uploaded in the last 7 days (empty if persistence isn't
+ * configured on the backend, e.g. local dev without DATABASE_URL). */
+export async function listFiles(): Promise<RecentFile[]> {
+  try {
+    const res = await fetch(`${API_BASE}/files`, {
+      headers: authHeaders(),
+      credentials: "include",
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+/** Reopens a previously uploaded file without re-uploading it - same
+ * response shape as uploadFile(). */
+export async function reopenFile(fileId: string): Promise<UploadResponse> {
+  const res = await fetch(`${API_BASE}/files/${fileId}`, {
+    headers: authHeaders(),
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error(await parseErrorDetail(res, "Could not reopen file"));
+  }
+  return res.json();
+}
+
+/** Past Q&A for a file, oldest first (empty if persistence isn't
+ * configured, or the file has none yet). */
+export async function getHistory(fileId: string): Promise<HistoryItem[]> {
+  try {
+    const res = await fetch(`${API_BASE}/history/${fileId}`, {
+      headers: authHeaders(),
+      credentials: "include",
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
