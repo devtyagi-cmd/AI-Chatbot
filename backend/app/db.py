@@ -34,6 +34,14 @@ def get_engine():
                 "backend/.env and set it to your Supabase Postgres connection "
                 "string (the direct/session connection, not the pooler one)."
             )
+        # Supabase (and most docs) give you a plain "postgresql://" URI,
+        # which SQLAlchemy defaults to opening with the psycopg2 driver.
+        # This app uses psycopg (v3) instead - it has much better
+        # pre-built-wheel support across Python versions/platforms, so
+        # rewrite the scheme here rather than requiring everyone to hand-
+        # edit the connection string they copy from Supabase.
+        if database_url.startswith("postgresql://"):
+            database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
         # pool_pre_ping avoids errors from connections that Supabase (or any
         # managed Postgres) has silently closed after a period of idleness.
         _engine = create_engine(database_url, pool_pre_ping=True)
