@@ -33,16 +33,16 @@ export default function DataProfile({
   );
 
   return (
-    <div className="bg-white rounded-xl p-4 space-y-4 border border-gray-100 shadow-sm">
+    <div className="bg-white/[0.03] backdrop-blur-sm rounded-xl p-4 space-y-4 border border-white/10">
       <div>
-        <h2 className="font-semibold text-lg truncate" title={filename}>
+        <h2 className="font-display text-lg text-white truncate" title={filename}>
           {filename}
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-mist-400 font-mono">
           {profile.row_count.toLocaleString()} rows · {profile.column_count} columns
         </p>
         {!!profile.removed_summary_rows && (
-          <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+          <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-brass-400 bg-brass-500/10 border border-brass-500/20 rounded-full px-2 py-0.5">
             <Wand2 size={11} />
             Removed {profile.removed_summary_rows} likely total/summary row
             {profile.removed_summary_rows > 1 ? "s" : ""} from the bottom of the file
@@ -51,7 +51,7 @@ export default function DataProfile({
       </div>
 
       <div>
-        <h3 className="font-medium mb-1.5 text-xs uppercase tracking-wide text-gray-400">
+        <h3 className="font-medium mb-1.5 text-[11px] uppercase tracking-widest text-mist-400">
           Columns
         </h3>
         <div className="flex flex-wrap gap-1.5">
@@ -59,7 +59,7 @@ export default function DataProfile({
             <span
               key={c.name}
               title={c.dtype}
-              className="inline-flex items-center gap-1 text-xs bg-gray-50 border border-gray-200 rounded-full px-2 py-1 text-gray-700"
+              className="inline-flex items-center gap-1 text-xs bg-white/[0.04] border border-white/10 rounded-full px-2 py-1 text-mist-100/90"
             >
               {dtypeIcon(c.dtype)}
               {c.name}
@@ -69,17 +69,17 @@ export default function DataProfile({
       </div>
 
       <div>
-        <h3 className="font-medium mb-1.5 text-xs uppercase tracking-wide text-gray-400">
+        <h3 className="font-medium mb-1.5 text-[11px] uppercase tracking-widest text-mist-400">
           Missing values
         </h3>
         {missingEntries.length === 0 ? (
-          <p className="text-sm text-gray-500">None 🎉</p>
+          <p className="text-sm text-mist-300">None</p>
         ) : (
-          <ul className="text-sm text-gray-600 space-y-0.5">
+          <ul className="text-sm text-mist-300 space-y-0.5 font-mono">
             {missingEntries.map(([col, count]) => (
               <li key={col} className="flex justify-between">
-                <span>{col}</span>
-                <span className="text-gray-400">{count}</span>
+                <span className="font-sans">{col}</span>
+                <span className="text-coral-400">{count}</span>
               </li>
             ))}
           </ul>
@@ -87,17 +87,17 @@ export default function DataProfile({
       </div>
 
       <div>
-        <h3 className="font-medium mb-1.5 text-xs uppercase tracking-wide text-gray-400">
+        <h3 className="font-medium mb-1.5 text-[11px] uppercase tracking-widest text-mist-400">
           Preview
         </h3>
-        <div className="overflow-x-auto rounded-lg border border-gray-100">
+        <div className="overflow-x-auto rounded-lg border border-white/10">
           <table className="text-sm w-full border-collapse">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-white/[0.03]">
                 {profile.columns.map((c) => (
                   <th
                     key={c.name}
-                    className={`text-left border-b border-gray-100 px-2 py-1.5 whitespace-nowrap font-medium text-gray-600 ${
+                    className={`text-left border-b border-white/10 px-2 py-1.5 whitespace-nowrap font-medium text-mist-300 ${
                       numericCols.has(c.name) ? "text-right" : ""
                     }`}
                   >
@@ -108,12 +108,15 @@ export default function DataProfile({
             </thead>
             <tbody>
               {profile.preview.map((row, i) => (
-                <tr key={i} className="odd:bg-white even:bg-gray-50/50 hover:bg-brand-50/60 transition-colors">
+                <tr
+                  key={i}
+                  className="odd:bg-white/[0.015] even:bg-transparent hover:bg-brass-500/[0.06] transition-colors"
+                >
                   {profile.columns.map((c) => (
                     <td
                       key={c.name}
-                      className={`px-2 py-1.5 whitespace-nowrap text-gray-700 ${
-                        numericCols.has(c.name) ? "text-right tabular-nums" : ""
+                      className={`px-2 py-1.5 whitespace-nowrap text-mist-100/85 ${
+                        numericCols.has(c.name) ? "text-right font-mono tabular-nums" : ""
                       }`}
                     >
                       {String(row[c.name] ?? "")}

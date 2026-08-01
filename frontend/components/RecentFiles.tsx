@@ -47,7 +47,7 @@ export default function RecentFiles({
 
   return (
     <div className="space-y-2">
-      <h3 className="text-xs font-medium uppercase tracking-wide text-gray-400 flex items-center gap-1.5">
+      <h3 className="text-[11px] font-medium uppercase tracking-widest text-mist-400 flex items-center gap-1.5">
         <Clock size={12} />
         Recent files (last 7 days)
       </h3>
@@ -57,20 +57,20 @@ export default function RecentFiles({
             key={f.file_id}
             onClick={() => handleReopen(f.file_id)}
             disabled={reopeningId !== null}
-            className="flex items-center gap-2.5 bg-white border border-gray-100 hover:border-brand-200 hover:bg-brand-50/40 transition-colors rounded-lg px-3 py-2.5 text-left disabled:opacity-50"
+            className="flex items-center gap-2.5 bg-white/[0.03] border border-white/10 hover:border-brass-500/30 hover:bg-brass-500/[0.05] transition-colors rounded-lg px-3 py-2.5 text-left disabled:opacity-50"
           >
-            <div className="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
-              <FileSpreadsheet size={15} className="text-brand-600" />
+            <div className="w-8 h-8 rounded-lg bg-brass-500/10 border border-brass-500/20 flex items-center justify-center shrink-0">
+              <FileSpreadsheet size={15} className="text-brass-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-gray-800 truncate">{f.filename}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm text-mist-100/90 truncate">{f.filename}</p>
+              <p className="text-xs text-mist-400 font-mono">
                 {f.row_count != null ? `${f.row_count.toLocaleString()} rows · ` : ""}
                 {timeAgo(f.uploaded_at)}
               </p>
             </div>
             {reopeningId === f.file_id && (
-              <span className="text-xs text-brand-600 shrink-0">Opening...</span>
+              <span className="text-xs text-brass-400 shrink-0">Opening...</span>
             )}
           </button>
         ))}

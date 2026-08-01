@@ -12,8 +12,8 @@ export default function StatusBanner({
     <div
       className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-sm animate-fade-in ${
         isError
-          ? "bg-red-50 border-red-200 text-red-700"
-          : "bg-emerald-50 border-emerald-200 text-emerald-700"
+          ? "bg-coral-500/10 border-coral-400/25 text-coral-400"
+          : "bg-emerald-500/10 border-emerald-400/25 text-emerald-400"
       }`}
     >
       {isError ? (

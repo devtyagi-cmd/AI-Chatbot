@@ -10,8 +10,8 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 
   if (status === "checking") {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="animate-spin text-brand-600" size={28} />
+      <main className="min-h-screen flex items-center justify-center bg-ink-950">
+        <Loader2 className="animate-spin text-brass-500" size={28} />
       </main>
     );
   }

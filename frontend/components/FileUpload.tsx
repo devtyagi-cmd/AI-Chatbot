@@ -47,20 +47,20 @@ export default function FileUpload({
           const file = e.dataTransfer.files?.[0];
           if (file) handleFile(file);
         }}
-        className={`border-2 border-dashed rounded-2xl p-10 text-center bg-white transition-all duration-150 ${
+        className={`border rounded-2xl p-12 text-center backdrop-blur-sm transition-all duration-150 ${
           dragOver
-            ? "border-brand-400 bg-brand-50 scale-[1.01]"
-            : "border-gray-300"
+            ? "border-brass-500/50 bg-brass-500/[0.06] scale-[1.005]"
+            : "border-white/10 bg-white/[0.03]"
         }`}
       >
-        <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center">
+        <div className="mx-auto mb-4 w-12 h-12 rounded-xl bg-brass-500/10 border border-brass-500/20 flex items-center justify-center">
           {dragOver ? (
-            <FileSpreadsheet className="text-brand-600" size={22} />
+            <FileSpreadsheet className="text-brass-400" size={20} />
           ) : (
-            <UploadCloud className="text-brand-600" size={22} />
+            <UploadCloud className="text-brass-400" size={20} />
           )}
         </div>
-        <p className="mb-4 text-gray-600 text-sm">
+        <p className="mb-5 text-mist-300 text-sm">
           Drag &amp; drop a CSV or Excel file here, or
         </p>
         <input
@@ -76,7 +76,7 @@ export default function FileUpload({
         <button
           onClick={() => inputRef.current?.click()}
           disabled={loading}
-          className="px-4 py-2 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 transition-colors text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-brand-300"
+          className="px-5 py-2.5 bg-brass-500 hover:bg-brass-600 active:bg-brass-700 transition-colors text-ink-950 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-brass-400/50"
         >
           {loading ? "Uploading..." : "Choose file"}
         </button>

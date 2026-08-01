@@ -4,8 +4,8 @@
   "description": "Upload a CSV or Excel file and ask questions about it in plain English.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#4f46e5",
+  "background_color": "#0A0F1C",
+  "theme_color": "#0A0F1C",
   "orientation": "portrait-primary",
   "icons": [
     {

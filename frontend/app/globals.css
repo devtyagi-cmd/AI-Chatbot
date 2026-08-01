@@ -8,10 +8,20 @@ html {
 }
 
 body {
-  color: #111827;
+  color: #EDEFF5;
+  background-color: #0A0F1C;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Slim, unobtrusive scrollbars for the scrollable chat panes */
+/* Fine dot-grid texture used as the app's signature backdrop, evoking a
+   data/terminal surface rather than a flat gradient. Intentionally very
+   low-opacity - texture, not decoration. */
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Slim scrollbars tuned for the dark surface */
 .scroll-thin::-webkit-scrollbar {
   width: 6px;
 }
@@ -19,6 +29,14 @@ body {
   background: transparent;
 }
 .scroll-thin::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
+  background-color: rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
