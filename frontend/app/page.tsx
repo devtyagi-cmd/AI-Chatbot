@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, LogOut } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import DataProfile from "@/components/DataProfile";
 import ChatWindow from "@/components/ChatWindow";
 import { UploadResponse } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 
 export default function Home() {
   const [uploaded, setUploaded] = useState<UploadResponse | null>(null);
+  const { logout } = useAuth();
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4">
@@ -17,12 +19,20 @@ export default function Home() {
           <div className="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center shrink-0">
             <BarChart3 size={18} className="text-white" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h1 className="text-xl font-semibold text-gray-900">AI Data Chatbot</h1>
             <p className="text-gray-500 text-sm">
               Upload a CSV or Excel file, then ask questions about it in plain English.
             </p>
           </div>
+          <button
+            onClick={logout}
+            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            title="Sign out"
+          >
+            <LogOut size={13} />
+            Sign out
+          </button>
         </header>
 
         {!uploaded && <FileUpload onUploaded={setUploaded} />}

@@ -7,7 +7,7 @@ load_dotenv()  # must run before importing anything that reads env vars at impor
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import chat, upload
+from app.routers import auth, chat, upload
 from app.security import require_shared_login
 
 app = FastAPI(title="AI Data Chatbot API", version="0.1.0")
@@ -15,7 +15,7 @@ app = FastAPI(title="AI Data Chatbot API", version="0.1.0")
 # Comma-separated list of allowed frontend origins, e.g.
 #   ALLOWED_ORIGINS=https://my-team-app.vercel.app,http://localhost:3000
 # Defaults to localhost so local dev keeps working with no extra setup.
-_allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000")
+_allowed_origins = os.environ.get("ALLOWED_ORIGINS","http://localhost:3000,http://127.0.0.1:3000",)
 ALLOWED_ORIGINS = [origin.strip() for origin in _allowed_origins.split(",") if origin.strip()]
 
 app.add_middleware(
@@ -28,6 +28,7 @@ app.add_middleware(
 
 # require_shared_login is a no-op locally (until BASIC_AUTH_USERNAME /
 # BASIC_AUTH_PASSWORD are set), so this doesn't affect local dev.
+app.include_router(auth.router, prefix="/api", dependencies=[Depends(require_shared_login)])
 app.include_router(upload.router, prefix="/api", dependencies=[Depends(require_shared_login)])
 app.include_router(chat.router, prefix="/api", dependencies=[Depends(require_shared_login)])
 
