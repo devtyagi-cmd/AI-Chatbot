@@ -8,6 +8,7 @@ hand rows back to the frontend or back to the LLM goes through here.
 
 from __future__ import annotations
 
+import datetime as _datetime
 import math
 from typing import Any, Dict, List
 
@@ -29,6 +30,18 @@ def json_safe(value: Any) -> Any:
         return value.isoformat()
     if isinstance(value, (pd.Timedelta,)):
         return str(value)
+    # Excel cells formatted as dates/times are parsed by openpyxl into
+    # plain stdlib datetime/date/time objects (NOT pd.Timestamp) - these
+    # serialize fine in an HTTP response (FastAPI's encoder handles them),
+    # but not when writing straight to the database via psycopg's raw
+    # json.dumps, which doesn't know how to handle them. Must check
+    # datetime before date, since datetime is a subclass of date.
+    if isinstance(value, _datetime.datetime):
+        return value.isoformat()
+    if isinstance(value, _datetime.date):
+        return value.isoformat()
+    if isinstance(value, _datetime.time):
+        return value.isoformat()
     if isinstance(value, float) and math.isnan(value):
         return None
     try:
